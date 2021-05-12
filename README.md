@@ -1,4 +1,4 @@
-# Tell-Truth
+# Tell Truth
 
 ## install
 ```bash
