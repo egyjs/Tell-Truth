@@ -22,7 +22,7 @@ const loading =  require('loading-cli');
     shuffle(config.pages).forEach(fb_page => {
         tell_truth(fb_page)
     });
-
+    console.log('Done alhamadllh!')
 
 
     async function login() {
@@ -81,7 +81,7 @@ const loading =  require('loading-cli');
              await page.goto(generatedLink,{ waitUntil: "networkidle2" });
              console.log(generatedLink,i+1)
 
-             let comment = "#tell_truth\n\r" + pickRand(config.comments);
+             let comment = "#tell_truth 🇵🇸\n\r" + pickRand(config.comments);
              comment += " #"+pickRand(config.hashtags)+ " #"+pickRand(config.hashtags)+ " #"+pickRand(config.hashtags)+ " #"+pickRand(config.hashtags);
              console.log(comment)
              await page.evaluate(async (comment)=>{
