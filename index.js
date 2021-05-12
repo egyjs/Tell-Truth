@@ -143,7 +143,7 @@ const comment_images = getFiles('assets/main');
             }, 200);
 
         });
-        await page.waitForTimeout(2000); // 20 sec
+        await page.waitForTimeout(20000); // 20 sec
     }
 
     function pickRand(arr,suffix= "\n\r"){
