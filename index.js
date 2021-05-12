@@ -3,6 +3,7 @@ const fs = require('fs');
 const config = require('./config.json');
 const cookies = require('./cookies.json');
 const loading =  require('loading-cli');
+const comment_images = getFiles('assets/main');
 
 
 
@@ -81,44 +82,53 @@ const loading =  require('loading-cli');
              await page.goto(generatedLink,{ waitUntil: "networkidle2" });
              console.log(generatedLink,i+1)
 
-             let comment = "#tell_truth 🇵🇸\n\r" + pickRand(config.comments);
-             comment += " #"+pickRand(config.hashtags)+ " #"+pickRand(config.hashtags)+ " #"+pickRand(config.hashtags)+ " #"+pickRand(config.hashtags);
-             console.log(comment)
-             await page.evaluate(async (comment)=>{
-                 // add rand hashtags to the comment
-                 document.querySelector("input[name='comment_text']").value=comment; // find the submit button, enable it and click it
-             },comment)
-             try {
-                 // upload photo if exist
-                 let comment_photo = pickRand(config.images,'');
-                 if (fs.existsSync(comment_photo)) {
-                     const elementHandle = await page.$("input[name=\"photo\"]");
-                     await elementHandle.uploadFile(comment_photo);
-                     // wait for upload file before submit
-                     await page.waitForSelector('[role="presentation"] img')
-                     console.log('photo uploaded')
-                 }
-             } catch(err) { console.error(err) }
+             for (let comment of config.comments) {
+                 let text = "#tell_truth 🇵🇸\n\r" + (comment.source?comment.source+"\n\r":"")+ comment.comment;
+                 text += " #"+pickRand(config.hashtags)+ " #"+pickRand(config.hashtags)+ " #"+pickRand(config.hashtags)+ " #"+pickRand(config.hashtags);
+                 console.log(text)
+                 await page.evaluate(async (text)=>{
+                     // add rand hashtags to the comment
+                     document.querySelector("input[name='comment_text']").value=text; // find the submit button, enable it and click it
+                 },text);
+                 try {
+                     // upload photo if exist
+                     let comment_photo = "";
+                     if (comment.photo){
+                         comment_photo = comment.photo;
+                     }else {
+                         comment_photo = pickRand(comment_images,'');
+                     }
+                     if (fs.existsSync(comment_photo)) {
+                         const elementHandle = await page.$("input[name=\"photo\"]");
+                         await elementHandle.uploadFile(comment_photo);
+                         // wait for upload file before submit
+                         await page.waitForSelector('[role="presentation"] img')
+                         console.log('photo uploaded')
+                     }
+                 } catch(err) { console.error(err) }
 
-             // click send!
-             await page.evaluate(async ()=>{
-                 const submitButton = document.querySelector("button[name='submit']");
-                 submitButton.disabled = false;
-                 submitButton.click();
-             })
+                 // click send!
+                 await page.evaluate(async ()=>{
+                     const submitButton = document.querySelector("button[name='submit']");
+                     submitButton.disabled = false;
+                     submitButton.click();
+                 })
 
-             const load = loading("loading !!").start();
+                 const load = loading("loading !!").start();
 
-             setTimeout(async function(){
-                 load.color = 'yellow';
-                 load.text = ' Sleeeeping';
-                 load.frame(["◰", "◳", "◲", "◱"]);
-             },6000)
+                 setTimeout(async function(){
+                     load.color = 'yellow';
+                     load.text = ' Sleeeeping';
+                     load.frame(["◰", "◳", "◲", "◱"]);
+                 },6000)
 
 
-             // delay before goto another post
-             await page.waitForTimeout(60000) // = 1 minute
-             load.stop()
+                 // delay before goto another post
+                 await page.waitForTimeout(60000+Math.floor((Math.random() * 1000) + 1000)) // = 1 minute
+                 load.stop()
+             }
+             await page.waitForTimeout(600000) // = 1 minute
+
          }
     }
 
@@ -166,5 +176,19 @@ const loading =  require('loading-cli');
     }
 
 
+
 })();
 
+function getFiles (dir, files_){
+    files_ = files_ || [];
+    var files = fs.readdirSync(dir);
+    for (var i in files){
+        var name = dir + '/' + files[i];
+        if (fs.statSync(name).isDirectory()){
+            getFiles(name, files_);
+        } else {
+            files_.push(name);
+        }
+    }
+    return files_;
+}
