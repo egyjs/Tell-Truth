@@ -1,5 +1,8 @@
 # Tell Truth
 
+## Requirements
+* nodejs & npm 
+
 ## install
 ```bash
 git clone https://github.com/egyjs/Tell-Truth.git tell_truth
@@ -13,6 +16,10 @@ npm install
   "username": "email",
   "password": "password",
 ```
+after adding your credential you you jsut have to run it!
+```
+npm run strat
+```
 2. if you wish to run the script in background just set `hideBrowser` to `true` in  `config.json` file
 
 # how to contribute
@@ -25,7 +32,6 @@ you can contribute in this project with 2 options
    "images": [],
    ```
 2. You can just run this script with your name in order to post a lot of comments , to "tell the truth"
-
 
 Thanks.
 
