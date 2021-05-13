@@ -88,36 +88,37 @@ const comment_images = getFiles('assets/main');
 
             let comment = pickRand(config.comments,null);
             // for (let comment of config.comments) {
-                let text = "#tell_truth 🇵🇸\n\r" + (comment.source?comment.source+"\n\r":"")+ comment.comment;
-                text += " #"+pickRand(config.hashtags)+ " #"+pickRand(config.hashtags)+ " #"+pickRand(config.hashtags)+ " #"+pickRand(config.hashtags);
-                console.log(text)
-                await page.evaluate(async (text)=>{
-                    // add rand hashtags to the comment
-                    document.querySelector("input[name='comment_text']").value=text; // find the submit button, enable it and click it
-                },text);
-                try {
-                    // upload photo if exist
-                    let comment_photo = "";
-                    if (comment.photo){
-                        comment_photo = comment.photo;
-                    }else {
-                        comment_photo = pickRand(comment_images,'');
-                    }
-                    if (fs.existsSync(comment_photo)) {
-                        const elementHandle = await page.$("input[name=\"photo\"]");
-                        await elementHandle.uploadFile(comment_photo);
-                        // wait for upload file before submit
-                        await page.waitForSelector('[role="presentation"] img')
-                        // console.log('photo uploaded')
-                    }
-                } catch(err) { console.error(err) }
+            let text = "#tell_truth 🇵🇸\n\r" + (comment.source?comment.source+"\n\r":"")+ comment.comment;
+            text += " #"+pickRand(config.hashtags)+ " #"+pickRand(config.hashtags)+ " #"+pickRand(config.hashtags)+ " #"+pickRand(config.hashtags);
+            console.log(text)
+            await page.evaluate(async (text)=>{
+                // add rand hashtags to the comment
+                document.querySelector("input[name='comment_text']").value=text; // find the submit button, enable it and click it
+            },text);
+            try {
+                // upload photo if exist
+                let comment_photo = "";
+                if (comment.photo){
+                    comment_photo = comment.photo;
+                }else {
+                    comment_photo = pickRand(comment_images,'');
+                }
+                if (fs.existsSync(comment_photo)) {
+                    const elementHandle = await page.$("input[name=\"photo\"]");
+                    await elementHandle.uploadFile(comment_photo);
+                    // wait for upload file before submit
+                    await page.waitForTimeout(9000);
+                    await page.waitForSelector('[role="presentation"] img');
 
+                     console.log('photo uploaded')
+                }
+            } catch(err) { console.error(err) }
                 // click send!
-                await page.evaluate(async ()=>{
-                    const submitButton = document.querySelector("button[name='submit']");
-                    submitButton.disabled = false;
-                    submitButton.click();
-                })
+            await page.evaluate(async ()=>{
+                const submitButton = document.querySelector("button[name='submit']");
+                submitButton.disabled = false;
+                submitButton.click();
+            })
 
 
                 // delay before goto another post
