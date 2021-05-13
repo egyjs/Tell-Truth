@@ -86,7 +86,7 @@ const comment_images = getFiles('assets/main');
             const load = loading("loading !!")
             console.log(generatedLink,i+1)
 
-            let comment = pickRand(config.comments);
+            let comment = pickRand(config.comments,null);
             // for (let comment of config.comments) {
                 let text = "#tell_truth 🇵🇸\n\r" + (comment.source?comment.source+"\n\r":"")+ comment.comment;
                 text += " #"+pickRand(config.hashtags)+ " #"+pickRand(config.hashtags)+ " #"+pickRand(config.hashtags)+ " #"+pickRand(config.hashtags);
@@ -124,7 +124,7 @@ const comment_images = getFiles('assets/main');
                 // await page.waitForTimeout(60000) // = 1 minute
             // }
             let waitTime = (60000+Math.floor((Math.random() * 2100)+1000));
-            console.log('wait for->',waitTime/100)
+            console.log('wait for->',waitTime/1000,'s')
             await page.waitForTimeout(waitTime) // = 1 minute
 
         }
@@ -151,7 +151,10 @@ const comment_images = getFiles('assets/main');
     }
 
     function pickRand(arr,suffix= "\n\r"){
-        return arr[Math.floor(Math.random() * arr.length)] + suffix
+        if (suffix == null){
+            return arr[Math.floor(Math.random() * arr.length)];
+        }
+        return arr[Math.floor(Math.random() * arr.length)] + suffix;
     }
 
     function shuffle(array) {
