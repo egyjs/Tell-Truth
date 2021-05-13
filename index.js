@@ -41,6 +41,7 @@ const comment_images = getFiles('assets/main');
     async function tell_truth(fb_page) {
         await page.goto(fb_page, { waitUntil: "networkidle2" });
 
+        console.log('scraping:'+ fb_page);
         await autoScroll();
 
         let posts_selector = '[class="du4w35lb k4urcfbm l9j0dhe7 sjgh65i0"]'; // selector for posts
@@ -85,7 +86,8 @@ const comment_images = getFiles('assets/main');
             const load = loading("loading !!")
             console.log(generatedLink,i+1)
 
-            for (let comment of config.comments) {
+            let comment = pickRand(config.comments);
+            // for (let comment of config.comments) {
                 let text = "#tell_truth 🇵🇸\n\r" + (comment.source?comment.source+"\n\r":"")+ comment.comment;
                 text += " #"+pickRand(config.hashtags)+ " #"+pickRand(config.hashtags)+ " #"+pickRand(config.hashtags)+ " #"+pickRand(config.hashtags);
                 console.log(text)
@@ -119,9 +121,11 @@ const comment_images = getFiles('assets/main');
 
 
                 // delay before goto another post
-                await page.waitForTimeout(60000) // = 1 minute
-            }
-            await page.waitForTimeout(60000) // = 1 minute
+                // await page.waitForTimeout(60000) // = 1 minute
+            // }
+            let waitTime = (60000+Math.floor((Math.random() * 2100)+1000));
+            console.log('wait for->',waitTime/100)
+            await page.waitForTimeout(waitTime) // = 1 minute
 
         }
     }
@@ -143,7 +147,7 @@ const comment_images = getFiles('assets/main');
             }, 200);
 
         });
-        await page.waitForTimeout(20000); // 20 sec
+        await page.waitForTimeout(40000); // 20 sec
     }
 
     function pickRand(arr,suffix= "\n\r"){
@@ -151,7 +155,7 @@ const comment_images = getFiles('assets/main');
     }
 
     function shuffle(array) {
-        var currentIndex = array.length, temporaryValue, randomIndex;
+        let currentIndex = array.length, temporaryValue, randomIndex;
 
         // While there remain elements to shuffle...
         while (0 !== currentIndex) {
@@ -182,9 +186,9 @@ const comment_images = getFiles('assets/main');
 
 function getFiles (dir, files_){
     files_ = files_ || [];
-    var files = fs.readdirSync(dir);
-    for (var i in files){
-        var name = dir + '/' + files[i];
+    let files = fs.readdirSync(dir);
+    for (let i in files){
+        let name = dir + '/' + files[i];
         if (fs.statSync(name).isDirectory()){
             getFiles(name, files_);
         } else {
